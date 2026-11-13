@@ -1,0 +1,18 @@
+{
+  "evenements": [
+    {
+      "date": "2026-12-13",
+      "titre": "Exemple : marché de Noël",
+      "lieu": "À remplacer",
+      "heure": "9h - 17h",
+      "description": "Événement d'exemple, à supprimer."
+    },
+    {
+      "date": "2026-12-20",
+      "titre": "Exemple : portes ouvertes",
+      "lieu": "À remplacer",
+      "heure": "9h - 12h",
+      "description": "Événement d'exemple, à supprimer."
+    }
+  ]
+}

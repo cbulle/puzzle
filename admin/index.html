@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Gérer les événements | Brasserie Puzzle</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="adm">
+<main>
+  <section id="login">
+    <h1>Espace brasseur</h1>
+    <form id="loginform">
+      <label for="email">E-mail</label>
+      <input id="email" type="email" autocomplete="username" required>
+      <label for="pass">Mot de passe</label>
+      <input id="pass" type="password" autocomplete="current-password" required>
+      <button class="btn" type="submit">Se connecter</button>
+    </form>
+  </section>
+
+  <section id="panel" hidden>
+    <h1 id="ftitle">Nouvel événement</h1>
+    <form id="evform">
+      <label for="date">Date</label>
+      <input id="date" type="date" required>
+      <label for="titre">Titre</label>
+      <input id="titre" type="text" required>
+      <label for="lieu">Lieu</label>
+      <input id="lieu" type="text">
+      <label for="heure">Heure</label>
+      <input id="heure" type="text" placeholder="ex. 9h - 17h">
+      <label for="description">Description</label>
+      <textarea id="description" rows="3"></textarea>
+      <label for="photo">Photo</label>
+      <input id="photo" type="file" accept="image/*">
+      <img id="preview" class="ph" alt="" hidden>
+      <button class="btn" type="submit">Publier</button>
+      <button class="btn" id="cancel" type="button" hidden>Annuler la modification</button>
+    </form>
+    <h2>Tous les événements</h2>
+    <div id="evlist"></div>
+    <button class="btn" id="logout" type="button">Se déconnecter</button>
+  </section>
+  <p id="msg" role="status"></p>
+</main>
+<script src="../config.js"></script>
+<script type="module" src="admin.js"></script>
+</body>
+</html>
