@@ -292,6 +292,31 @@ nav a {
     body {
         padding-top: 70px
     }
+
+    header {
+        height: 70px
+    }
+
+    #burger {
+        display: none
+    }
+
+    header nav,
+    header nav.open {
+        position: static;
+        display: flex;
+        align-items: center;
+        gap: .25rem;
+        padding: 0;
+        border: 0;
+        background: transparent
+    }
+
+    header nav a {
+        display: inline-block;
+        padding: .5rem .65rem;
+        font-size: 1rem
+    }
 }
 
 .grid {
@@ -429,6 +454,22 @@ nav a {
 }
 
 .dots i.on {
+    background: #5b3fa0
+}
+
+.dots button {
+    width: 10px;
+    height: 10px;
+    min-width: 10px;
+    min-height: 10px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #cbbf9f;
+    cursor: pointer
+}
+
+.dots button.on {
     background: #5b3fa0
 }
 
@@ -646,4 +687,33 @@ footer a {
     text-align: center;
     font-weight: 700;
     color: #5b3fa0
+}
+
+.event-error {
+    color: #8b241e;
+    font-weight: 700
+}
+
+.admin-event .btn {
+    margin-bottom: .5rem
+}
+
+.preview {
+    max-width: 520px
+}
+
+button:disabled {
+    cursor: wait;
+    opacity: .65
+}
+
+@media(min-width:720px) {
+    #burger {
+        display: none
+    }
+
+    header nav,
+    header nav.open {
+        display: flex
+    }
 }

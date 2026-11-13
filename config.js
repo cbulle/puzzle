@@ -1,8 +1,11 @@
-// Colle ici la configuration web de ton projet Firebase (console Firebase > Paramètres du projet).
-// Ce ne sont pas des secrets : la sécurité est dans firestore.rules.
-window.FB = {
-  apiKey: '',
-  authDomain: '',
-  projectId: '',
-  appId: ''
+const firebaseConfig = {
+  apiKey: 'AIzaSyAFWFLljrkJw99xbFGZh-swTKPuDD6Pw04',
+  authDomain: 'puzzle-brasserie.firebaseapp.com',
+  projectId: 'puzzle-brasserie',
+  storageBucket: 'puzzle-brasserie.firebasestorage.app',
+  messagingSenderId: '733553698561',
+  appId: '1:733553698561:web:a199a0f4346581170c1d00',
+  measurementId: 'G-F3HR2MSDLC'
 };
+
+export default firebaseConfig;
