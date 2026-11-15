@@ -13,6 +13,8 @@ npm run preview
 
 Le résultat de production est généré dans `dist/`.
 
+La configuration Firebase locale se place dans `.env` à partir de `.env.example`. Ce fichier est ignoré par Git. Renseigner les variables `PUBLIC_FIREBASE_*` pour activer l’administration et le chargement des événements depuis Firestore.
+
 ## Référencement et domaine
 
 Tant que le nom de domaine n’est pas choisi, le site n’invente pas d’URL canonique et ne publie pas de sitemap avec un faux domaine. Les métadonnées descriptives, Open Graph, les données structurées et les URL propres des pages sont déjà préparées.

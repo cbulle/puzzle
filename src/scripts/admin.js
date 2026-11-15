@@ -33,7 +33,7 @@ const say = (text, isError = false) => {
 };
 
 if (!firebaseConfigured || !auth || !db) {
-  say('Configuration Firebase manquante. Vérifiez le fichier config.js.', true);
+  say('Configuration Firebase manquante. Vérifiez les variables Firebase de votre fichier .env.', true);
 } else {
   onAuthStateChanged(auth, (user) => {
     currentUser = user;
