@@ -1,0 +1,14 @@
+---
+import EventsList from '../components/EventsList.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+const description = 'Retrouvez les prochains marchés, portes ouvertes et rendez-vous de la Brasserie Puzzle à Lent, dans la Dombes.';
+---
+<BaseLayout title="Événements et marchés à venir | Brasserie Puzzle, Ain" description={description} canonicalPath="/evenements.html">
+  <main>
+    <section>
+      <h1>Événements à venir</h1>
+      <p>Retrouvez la Brasserie Puzzle sur les marchés et lors de ses prochains rendez-vous dans la Dombes et l’Ain.</p>
+      <EventsList />
+    </section>
+  </main>
+</BaseLayout>

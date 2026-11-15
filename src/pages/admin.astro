@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="Administration | Brasserie Puzzle"
+  description="Espace privé de gestion des événements de la Brasserie Puzzle."
+  noindex
+>
+  <main class="adm">
+    <section id="login">
+      <h1>Espace brasseur</h1>
+      <form id="loginform">
+        <label for="email">E-mail</label>
+        <input id="email" name="email" type="email" autocomplete="username" required />
+        <label for="password">Mot de passe</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required />
+        <button class="btn" type="submit">Se connecter</button>
+      </form>
+    </section>
+
+    <section id="panel" hidden>
+      <h1 id="form-title">Nouvel événement</h1>
+      <form id="event-form">
+        <label for="date">Date</label>
+        <input id="date" name="date" type="date" required />
+        <label for="titre">Titre</label>
+        <input id="titre" name="titre" type="text" required />
+        <label for="lieu">Lieu</label>
+        <input id="lieu" name="lieu" type="text" />
+        <label for="heure">Heure</label>
+        <input id="heure" name="heure" type="text" placeholder="ex. 9h - 17h" />
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="3"></textarea>
+        <label for="photo">Photo</label>
+        <input id="photo" name="photo" type="file" accept="image/*" />
+        <img id="preview" class="ph preview" alt="Aperçu de la photo de l’événement" hidden />
+        <button class="btn" id="publish" type="submit">Publier</button>
+        <button class="btn" id="cancel" type="button" hidden>Annuler la modification</button>
+      </form>
+      <h2>Tous les événements (50 plus récents)</h2>
+      <div id="event-list"></div>
+      <button class="btn" id="logout" type="button">Se déconnecter</button>
+    </section>
+    <p id="msg" role="status" aria-live="polite"></p>
+  </main>
+</BaseLayout>
+
+<script>
+  import '../scripts/admin.js';
+</script>

@@ -1,0 +1,32 @@
+---
+import BeerPieces from '../components/BeerPieces.astro';
+import EventsCarousel from '../components/EventsCarousel.astro';
+import Intro from '../components/Intro.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const description = 'Bières artisanales brassées à Lent, dans la Dombes (Ain) : découvrez les quatre bières de la Brasserie Puzzle et ses prochains événements.';
+---
+<BaseLayout
+  title="Brasserie Puzzle – Bières artisanales à Lent, dans la Dombes"
+  description={description}
+  canonicalPath="/"
+  homepage
+>
+  <Intro />
+  <main>
+    <section class="hero">
+      <h1>Des bières de caractère, nées dans la Dombes</h1>
+      <p>Brasserie Puzzle, à Lent dans l’Ain. Quatre bières, quatre personnages, un seul puzzle.</p>
+    </section>
+    <EventsCarousel />
+    <section id="bieres" aria-labelledby="beers-title">
+      <h2 id="beers-title">Les quatre pièces</h2>
+      <BeerPieces />
+    </section>
+    <section class="tz">
+      <h2>Une brasserie de ferme</h2>
+      <p>La brasserie est installée dans un ancien corps de ferme, au pays des étangs. Le brasseur s’inspire de la nature autour de lui.</p>
+      <a class="btn" href="/brasserie.html">Découvrir la brasserie</a>
+    </section>
+  </main>
+</BaseLayout>

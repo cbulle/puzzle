@@ -1,0 +1,66 @@
+---
+import BeerPortrait from '../components/BeerPortrait.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { beers } from '../data/beers.js';
+
+export function getStaticPaths() {
+  return beers.map((beer) => ({ params: { slug: beer.slug }, props: { beer } }));
+}
+
+const { beer } = Astro.props;
+const description = `Découvrez ${beer.name}, bière ${beer.style.toLowerCase()} artisanale brassée à Lent dans l’Ain par la Brasserie Puzzle. ${beer.degree} d’alcool, disponible en bouteilles de 33 cl et 75 cl.`;
+const canonicalPath = `/biere-${beer.slug}.html`;
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: `${beer.name} – ${beer.style}`,
+  description,
+  category: 'Bière artisanale',
+  brand: {
+    '@type': 'Brand',
+    name: 'Brasserie Puzzle'
+  },
+  manufacturer: {
+    '@type': 'Brewery',
+    name: 'Brasserie Puzzle',
+    ...(Astro.site ? { url: Astro.site.href } : {}),
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Lent',
+      postalCode: '01240',
+      addressCountry: 'FR'
+    }
+  }
+};
+---
+<BaseLayout
+  title={`${beer.name} – ${beer.style} | Brasserie Puzzle`}
+  description={description}
+  canonicalPath={canonicalPath}
+  structuredData={structuredData}
+>
+  <main>
+    <section class="bh" style={`--c:${beer.color};--i:${beer.ink}`}>
+      <BeerPortrait beer={beer} large />
+      <h1>{beer.name}</h1>
+      <p class="type">{beer.style}</p>
+    </section>
+    <section>
+      <h2>Caractéristiques</h2>
+      <ul class="car">
+        <li><b>Type</b> {beer.style}</li>
+        <li><b>Degré</b> {beer.degree}</li>
+        <li><b>Formats</b> 33 cl et 75 cl</li>
+      </ul>
+    </section>
+    <section>
+      <h2>Les autres pièces</h2>
+      <div class="autres">
+        {beers.filter((other) => other.slug !== beer.slug).map((other) => (
+          <a href={`/biere-${other.slug}.html`} style={`--c:${other.color}`}>{other.name}</a>
+        ))}
+      </div>
+      <a class="btn" href="/#bieres">Retour au puzzle</a>
+    </section>
+  </main>
+</BaseLayout>

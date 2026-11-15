@@ -1,0 +1,71 @@
+---
+import BeerPortrait from './BeerPortrait.astro';
+import { beers } from '../data/beers.js';
+
+const paths = [
+  'M0,0L100,0L100,40 C108,40 122,32 122,50 C122,68 108,60 100,60 L100,100L60,100 C60,108 68,122 50,122 C32,122 40,108 40,100 L0,100L0,0Z',
+  'M0,0L100,0L100,100L60,100 C60,108 68,122 50,122 C32,122 40,108 40,100 L0,100L0,60 C8,60 22,68 22,50 C22,32 8,40 0,40 L0,0Z',
+  'M0,0L40,0 C40,8 32,22 50,22 C68,22 60,8 60,0 L100,0L100,40 C108,40 122,32 122,50 C122,68 108,60 100,60 L100,100L0,100L0,0Z',
+  'M0,0L40,0 C40,8 32,22 50,22 C68,22 60,8 60,0 L100,0L100,100L0,100L0,60 C8,60 22,68 22,50 C22,32 8,40 0,40 L0,0Z'
+];
+---
+<div class="grid">
+  {beers.map((beer, index) => (
+    <a
+      class="pc"
+      href={`/biere-${beer.slug}.html`}
+      style={`--c:${beer.color};--i:${beer.ink};--t:${index % 2 ? 90 : -90}px,${index < 2 ? -70 : 70}px;--r:${index % 2 ? 12 : -14}deg`}
+      data-piece
+    >
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <path d={paths[index]} fill={beer.color} stroke="#f6efdc" stroke-width="2" vector-effect="non-scaling-stroke" />
+      </svg>
+      <span class="pt">
+        <BeerPortrait beer={beer} />
+        <h3>{beer.name}</h3>
+        <p>{beer.style}</p>
+        <span class="more">Découvrir cette bière</span>
+      </span>
+    </a>
+  ))}
+</div>
+<p class="done-msg" data-puzzle-message>Le puzzle est complet.</p>
+
+<script>
+  const pieces = Array.from(document.querySelectorAll('[data-piece]'));
+  const message = document.querySelector('[data-puzzle-message]');
+  let visibleCount = 0;
+  const reveal = (piece) => {
+    if (piece.classList.contains('in')) return;
+    piece.classList.add('in');
+    visibleCount += 1;
+    if (visibleCount === pieces.length && message instanceof HTMLElement) {
+      window.setTimeout(() => message.classList.add('show'), 1000);
+    }
+  };
+
+  if (!('IntersectionObserver' in window)) {
+    pieces.forEach(reveal);
+  } else {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        reveal(entry.target);
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.35 });
+    pieces.forEach((piece) => observer.observe(piece));
+  }
+
+  document.querySelectorAll('[data-portrait]').forEach((portrait) => {
+    const image = portrait.querySelector('img');
+    const fallback = portrait.querySelector('[data-portrait-fallback]');
+    if (!(image instanceof HTMLImageElement) || !(fallback instanceof HTMLElement)) return;
+    const showFallback = () => {
+      image.remove();
+      fallback.hidden = false;
+    };
+    image.addEventListener('error', showFallback, { once: true });
+    if (image.complete && image.naturalWidth === 0) showFallback();
+  });
+</script>

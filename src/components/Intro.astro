@@ -1,0 +1,57 @@
+<div id="intro" aria-label="Présentation de la Brasserie Puzzle">
+  <svg viewBox="0 0 200 230" aria-hidden="true">
+    <defs>
+      <mask id="intro-mask">
+        <rect width="200" height="230" fill="#fff" />
+        <path transform="translate(100 128) rotate(45) scale(1.5)" d="M-30 -30H-9C-9 -42 9 -42 9 -30H30V-9C42 -9 42 9 30 9V30H9C9 18 -9 18 -9 30H-30V9C-18 9 -18 -9 -30 -9Z" />
+      </mask>
+    </defs>
+    <g class="leaf">
+      <path fill="#f2e9d4" mask="url(#intro-mask)" d="M100 10C112 30 118 40 130 50C148 62 150 80 156 100C172 108 176 130 168 150C160 178 130 200 102 204L104 226H98L98 204C70 200 40 178 32 150C24 130 28 108 44 100C50 80 52 62 70 50C82 40 88 30 100 10Z" />
+    </g>
+    <g transform="translate(100 128)">
+      <g class="piece">
+        <path fill="#a68bd6" transform="rotate(45) scale(1.5)" d="M-30 -30H-9C-9 -42 9 -42 9 -30H30V-9C42 -9 42 9 30 9V30H9C9 18 -9 18 -9 30H-30V9C-18 9 -18 -9 -30 -9Z" />
+      </g>
+    </g>
+  </svg>
+  <p class="ititle">Brasserie Puzzle</p>
+  <button id="skip" type="button">Passer l’introduction</button>
+</div>
+
+<script>
+  const intro = document.querySelector('#intro');
+  const skip = document.querySelector('#skip');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let dismissed = false;
+
+  try {
+    dismissed = sessionStorage.getItem('intro') === '1';
+  } catch {
+    dismissed = false;
+  }
+
+  if (intro instanceof HTMLElement && skip instanceof HTMLButtonElement) {
+    let removeTimer;
+    const close = () => {
+      if (dismissed) return;
+      dismissed = true;
+      intro.classList.add('out');
+      try {
+        sessionStorage.setItem('intro', '1');
+      } catch {
+        // Dismissing the animation does not depend on session storage.
+      }
+      removeTimer = window.setTimeout(() => intro.remove(), 800);
+    };
+
+    if (dismissed || reducedMotion) {
+      intro.remove();
+    } else {
+      skip.addEventListener('click', close);
+      window.setTimeout(close, 4200);
+    }
+
+    window.addEventListener('pagehide', () => window.clearTimeout(removeTimer), { once: true });
+  }
+</script>

@@ -10,6 +10,17 @@
     box-sizing: border-box
 }
 
+[hidden] {
+    display: none !important
+}
+
+.portrait-fallback {
+    width: 44%;
+    height: auto;
+    aspect-ratio: 1;
+    margin-bottom: .2rem
+}
+
 html {
     scroll-behavior: smooth
 }

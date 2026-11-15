@@ -1,0 +1,42 @@
+<header>
+  <a class="brand" href="/" aria-label="Brasserie Puzzle, accueil">
+    <img src="/assets/logo.svg" alt="" width="34" height="39" />
+    <span>Puzzle</span>
+  </a>
+  <button id="burger" type="button" aria-expanded="false" aria-controls="nav" aria-label="Ouvrir le menu">
+    <i></i><i></i><i></i>
+  </button>
+  <nav id="nav" aria-label="Navigation principale">
+    <a href="/#bieres">Les bières</a>
+    <a href="/brasserie.html">La brasserie</a>
+    <a href="/evenements.html">Événements</a>
+    <a href="/contact.html">Contact</a>
+  </nav>
+</header>
+
+<script>
+  const burger = document.querySelector('#burger');
+  const navigation = document.querySelector('#nav');
+
+  if (burger instanceof HTMLButtonElement && navigation instanceof HTMLElement) {
+    const closeMenu = () => {
+      burger.setAttribute('aria-expanded', 'false');
+      burger.setAttribute('aria-label', 'Ouvrir le menu');
+      navigation.classList.remove('open');
+    };
+
+    burger.addEventListener('click', () => {
+      const open = burger.getAttribute('aria-expanded') !== 'true';
+      burger.setAttribute('aria-expanded', String(open));
+      burger.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
+      navigation.classList.toggle('open', open);
+    });
+
+    navigation.addEventListener('click', (event) => {
+      if (event.target instanceof HTMLAnchorElement) closeMenu();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeMenu();
+    });
+  }
+</script>

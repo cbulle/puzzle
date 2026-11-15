@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const description = 'Contacter la Brasserie Puzzle à Lent (01240), dans l’Ain : adresse, téléphone et horaires pour visiter la brasserie artisanale.';
+---
+<BaseLayout title="Contact et accès à la brasserie | Brasserie Puzzle, Lent" description={description} canonicalPath="/contact.html">
+  <main>
+    <section>
+      <h1>Nous contacter</h1>
+      <div class="cblocks">
+        <div class="cbloc">
+          <h2>Coordonnées</h2>
+          <a class="tel" href="tel:+33622942892">06 22 94 28 92</a>
+          <p>Par téléphone, pour toute question et pour réserver une visite.</p>
+          <h3>Adresse</h3>
+          <address>341 route de Bresse<br />01240 Lent, France</address>
+          <h3>Horaires</h3>
+          <p>Ouvert le samedi de 9 h à 12 h. En dehors de ce créneau, sur réservation.</p>
+        </div>
+        <div class="cbloc">
+          <h2>Plan d’accès</h2>
+          <div class="map" data-map>
+            <button class="btn" type="button" data-show-map>Afficher la carte</button>
+          </div>
+          <a
+            class="btn"
+            href="https://www.google.com/maps/search/?api=1&amp;query=341+route+de+Bresse+01240+Lent"
+            target="_blank"
+            rel="noopener noreferrer"
+          >Ouvrir dans Google Maps</a>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  const map = document.querySelector('[data-map]');
+  const showMap = document.querySelector('[data-show-map]');
+  showMap?.addEventListener('click', () => {
+    if (!(map instanceof HTMLElement)) return;
+    const frame = document.createElement('iframe');
+    frame.src = 'https://www.google.com/maps?q=341+route+de+Bresse+01240+Lent&output=embed';
+    frame.title = 'Plan d’accès à la Brasserie Puzzle, 341 route de Bresse à Lent';
+    frame.loading = 'lazy';
+    frame.referrerPolicy = 'no-referrer-when-downgrade';
+    map.replaceChildren(frame);
+  });
+</script>
