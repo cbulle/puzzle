@@ -19,6 +19,18 @@ if (parsedSite && (parsedSite.pathname !== '/' || parsedSite.search || parsedSit
 
 export default defineConfig({
   ...(site ? { site } : {}),
+  vite: {
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('/node_modules/@firebase/auth/')) return 'firebase-auth';
+            if (id.includes('/node_modules/@firebase/firestore/')) return 'firebase-firestore';
+          }
+        }
+      }
+    }
+  },
   build: {
     format: 'file'
   },

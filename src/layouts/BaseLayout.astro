@@ -14,7 +14,7 @@ const {
 
 const site = Astro.site;
 const canonical = site && canonicalPath ? new URL(canonicalPath, site).href : undefined;
-const socialImage = site ? new URL('/assets/logo.svg', site).href : undefined;
+const socialImage = site ? new URL('/images/logo.svg', site).href : undefined;
 const pageUrl = canonical || '/';
 const jsonLd = structuredData || (homepage ? {
   '@context': 'https://schema.org',
@@ -59,7 +59,7 @@ const jsonLd = structuredData || (homepage ? {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     {socialImage && <meta property="og:image" content={socialImage} />}
-    <link rel="icon" href="/assets/logo.svg" type="image/svg+xml" />
+    <link rel="icon" href="/images/logo.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

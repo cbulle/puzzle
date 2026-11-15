@@ -33,4 +33,4 @@ L’espace brasseur reste exclu des moteurs de recherche et n’est pas ajouté 
 
 ## Images
 
-Les images à ajouter au site vont dans `public/images/`. Les photos des bières doivent être nommées d’après leur URL (par exemple `valentin.png`) et placées dans `public/images/bieres/`. Le logo actuel se trouve dans `public/assets/logo.svg`.
+Les images à ajouter au site vont dans `public/images/`. Le logo se trouve directement dans ce dossier. Les photos des bières doivent être nommées d’après leur URL (par exemple `valentin.png`) et placées dans `public/images/bieres/`.
