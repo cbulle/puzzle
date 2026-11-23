@@ -1,0 +1,35 @@
+---
+import { beers } from '../data/beers.js';
+
+// Quatre pièces qui s'emboîtent en carré 2 × 2 (unité : 100 = une case).
+// Haut-gauche : tenons à droite et en bas. Haut-droite : mortaise à gauche, tenon en bas.
+// Bas-gauche : mortaise en haut, tenon à droite. Bas-droite : mortaises en haut et à gauche.
+const shapes = [
+  'M0,0H100V38C112,38 124,30 124,50C124,70 112,62 100,62V100H62C62,112 70,124 50,124C30,124 38,112 38,100H0Z',
+  'M0,0H100V100H62C62,112 70,124 50,124C30,124 38,112 38,100H0V62C12,62 24,70 24,50C24,30 12,38 0,38Z',
+  'M0,0H38C38,12 30,24 50,24C70,24 62,12 62,0H100V38C112,38 124,30 124,50C124,70 112,62 100,62V100H0Z',
+  'M0,0H38C38,12 30,24 50,24C70,24 62,12 62,0H100V100H0V62C12,62 24,70 24,50C24,30 12,38 0,38Z'
+];
+---
+<div class="puzzle">
+  {beers.map((beer, i) => (
+    <a class="piece" href={`/biere-${beer.slug}.html`} style={`--c:${beer.color};--i:${beer.ink}`}>
+      <svg viewBox="0 0 100 100" overflow="visible" role="img" aria-label={`${beer.name}, ${beer.style}`}>
+        <defs>
+          <clipPath id={`piece-${beer.slug}`}><path d={shapes[i]} /></clipPath>
+        </defs>
+        <g clip-path={`url(#piece-${beer.slug})`}>
+          <rect x="0" y="0" width="125" height="125" fill={beer.color} />
+          {beer.portrait
+            ? <image href={`/images/bieres/${beer.slug}.jpg`} x="0" y="0" width="124" height="124" preserveAspectRatio="xMidYMid slice" />
+            : <image href="/images/feuille-encre.png" x="31" y="24" width="38" height="40" opacity="0.18" />}
+        </g>
+        <path class="outline" d={shapes[i]} />
+      </svg>
+      <span class="tag">
+        <span class="tag-name">{beer.name}</span>
+        <span class="tag-style">{beer.portrait ? beer.style : 'bientôt'}</span>
+      </span>
+    </a>
+  ))}
+</div>

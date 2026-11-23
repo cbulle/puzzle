@@ -1,0 +1,20 @@
+---
+// Gros boutons d'action, pensés pour le téléphone : appeler, itinéraire, e-mail.
+const { email = false } = Astro.props;
+---
+<div class="actions">
+  <a class="act" href="tel:+33622942892">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z" /></svg>
+    <span>Appeler<small>06 22 94 28 92</small></span>
+  </a>
+  <a class="act" href="https://www.google.com/maps/dir/?api=1&amp;destination=341+route+de+Bresse+01240+Lent" target="_blank" rel="noopener noreferrer">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" /></svg>
+    <span>Itinéraire<small>341 route de Bresse, Lent</small></span>
+  </a>
+  {email && (
+    <a class="act" href="mailto:brasseriepuzzle@gmail.com">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5z" /></svg>
+      <span>Écrire<small>brasseriepuzzle@gmail.com</small></span>
+    </a>
+  )}
+</div>

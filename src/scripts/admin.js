@@ -27,6 +27,15 @@ let editId = null;
 let photo = '';
 let unsubscribeEvents;
 
+const todayIso = () => {
+  const d = new Date();
+  return [d.getFullYear(), String(d.getMonth() + 1).padStart(2, '0'), String(d.getDate()).padStart(2, '0')].join('-');
+};
+const frDate = (iso) => {
+  const m = /^(d{4})-(d{2})-(d{2})$/.exec(iso || '');
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : iso || '';
+};
+
 const say = (text, isError = false) => {
   message.textContent = text;
   message.classList.toggle('event-error', isError);
@@ -80,7 +89,9 @@ function renderEvents(events) {
     const row = document.createElement('article');
     row.className = 'ev admin-event';
     const title = document.createElement('p');
-    title.textContent = `${event.date || ''} – ${event.titre || ''}`;
+    const range = event.fin && event.fin !== event.date ? `${frDate(event.date)} → ${frDate(event.fin)}` : frDate(event.date);
+    title.textContent = `${range} – ${event.titre || ''}`;
+    if ((event.fin || event.date || '') < todayIso()) row.classList.add('admin-past');
 
     const edit = document.createElement('button');
     edit.className = 'btn';
@@ -156,12 +167,15 @@ function editEvent(event) {
   for (const field of ['date', 'titre', 'lieu', 'heure', 'description']) {
     eventForm.elements.namedItem(field).value = event[field] || '';
   }
+  eventForm.elements.namedItem('fin').value = event.fin && event.fin !== event.date ? event.fin : '';
   updatePreview();
   $('form-title').textContent = 'Modifier l’événement';
   $('publish').textContent = 'Enregistrer';
   $('cancel').hidden = false;
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+$('date').addEventListener('change', (e) => { $('fin').min = e.currentTarget.value; });
 
 $('cancel').addEventListener('click', () => {
   resetForm();
@@ -174,8 +188,16 @@ eventForm.addEventListener('submit', async (event) => {
   button.disabled = true;
   say('Publication…');
   const formData = new FormData(eventForm);
+  const start = String(formData.get('date'));
+  const end = String(formData.get('fin') || '') || start;
+  if (end < start) {
+    say('La date de fin est avant la date de début.', true);
+    button.disabled = false;
+    return;
+  }
   const eventData = {
-    date: formData.get('date'),
+    date: start,
+    fin: end,
     titre: String(formData.get('titre')).trim(),
     lieu: String(formData.get('lieu')).trim(),
     heure: String(formData.get('heure')).trim(),

@@ -1,14 +1,12 @@
 ---
 import EventsList from '../components/EventsList.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-const description = 'Retrouvez les prochains marchés, portes ouvertes et rendez-vous de la Brasserie Puzzle à Lent, dans la Dombes.';
+const description = 'Les prochains marchés, portes ouvertes et rendez-vous de la Brasserie Puzzle dans la Dombes et l’Ain.';
 ---
-<BaseLayout title="Événements et marchés à venir | Brasserie Puzzle, Ain" description={description} canonicalPath="/evenements.html">
-  <main>
-    <section>
-      <h1>Événements à venir</h1>
-      <p>Retrouvez la Brasserie Puzzle sur les marchés et lors de ses prochains rendez-vous dans la Dombes et l’Ain.</p>
-      <EventsList />
-    </section>
+<BaseLayout title="Agenda | Brasserie Puzzle, Lent" description={description} canonicalPath="/evenements.html">
+  <main class="wrap">
+    <h1>Agenda</h1>
+    <p class="lead">Où trouver les bières Puzzle dans les semaines à venir.</p>
+    <EventsList />
   </main>
 </BaseLayout>

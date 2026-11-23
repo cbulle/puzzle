@@ -1,16 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-const description = 'Découvrez la Brasserie Puzzle, brasserie artisanale de Lent dans l’Ain, installée dans un ancien corps de ferme au cœur de la Dombes.';
+const description = 'La Brasserie Puzzle, micro-brasserie installée dans un ancien corps de ferme à Lent, au cœur de la Dombes (Ain).';
 ---
-<BaseLayout title="Brasserie artisanale à Lent | Brasserie Puzzle" description={description} canonicalPath="/brasserie.html">
-  <main>
-    <section>
-      <h1>La brasserie</h1>
-      <p>Née dans la Dombes, pays des étangs, la Brasserie Puzzle aime le malt et le houblon. Elle est installée dans un ancien corps de ferme typique, et le brasseur puise son inspiration dans la nature environnante.</p>
-      <p>Ses bières sont fortement houblonnées et brassées avec soin.</p>
-      <h2>Sur place</h2>
-      <p>Dégustation de produits, visites gratuites, vente à la propriété et sur les marchés.</p>
-      <a class="btn" href="/contact.html">Nous contacter</a>
-    </section>
+<BaseLayout title="La brasserie | Brasserie Puzzle, Lent" description={description} canonicalPath="/brasserie.html">
+  <main class="wrap prose">
+    <h1>La brasserie</h1>
+    <p class="lead">Une micro-brasserie dans un ancien corps de ferme, à Lent, au pays des étangs.</p>
+    <p>La Brasserie Puzzle brasse des bières pur malt, bien houblonnées, refermentées en bouteille. Rien n’est pasteurisé ni filtré&nbsp;: le petit dépôt au fond de la bouteille, c’est normal.</p>
+    <p>Chaque recette a son personnage, dessiné sur l’étiquette. Mises bout à bout, les étiquettes forment un puzzle.</p>
+    <h2>Venir sur place</h2>
+    <p>Vente directe le samedi de 9 h à 12 h. Visites et dégustations sur rendez-vous, il suffit d’appeler.</p>
+    <p>On retrouve aussi les bières sur les marchés du coin&nbsp;: voir <a href="/evenements.html">l’agenda</a>.</p>
+    <p><a class="btn" href="/contact.html">Plan d’accès et contact</a></p>
   </main>
 </BaseLayout>

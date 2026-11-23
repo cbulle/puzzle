@@ -1,38 +1,30 @@
 import firebaseConfig from '../firebase-config.js';
 
+// Un événement : { date (début), fin (facultative), titre, heure, lieu, description, photo }
+// Règle d'affichage : un événement reste visible jusqu'à la fin de son dernier jour
+// (la date de fin, ou la date de début s'il ne dure qu'un jour).
+
+const MAX_EVENTS = 50;
+
 function parseDate(value) {
   let match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value || '');
-  if (match) {
-    const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 12);
-    if (
-      date.getFullYear() === Number(match[1]) &&
-      date.getMonth() === Number(match[2]) - 1 &&
-      date.getDate() === Number(match[3])
-    ) return date;
-    return null;
+  let y, m, d;
+  if (match) [, y, m, d] = match.map(Number);
+  else {
+    match = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(value || '');
+    if (!match) return null;
+    [, d, m, y] = match.map(Number);
   }
-
-  match = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(value || '');
-  if (!match) return null;
-  const date = new Date(Number(match[3]), Number(match[2]) - 1, Number(match[1]), 12);
-  return date.getFullYear() === Number(match[3]) &&
-    date.getMonth() === Number(match[2]) - 1 &&
-    date.getDate() === Number(match[1])
-    ? date
-    : null;
+  const date = new Date(y, m - 1, d, 12);
+  return date.getFullYear() === y && date.getMonth() === m - 1 && date.getDate() === d ? date : null;
 }
 
-export function formatEventDate(date) {
-  return date.toLocaleDateString('fr-FR', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  });
-}
-
-export function eventDetails(event) {
-  return [event.heure, event.lieu].filter(Boolean).join(' – ');
+export function isoDay(date) {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0')
+  ].join('-');
 }
 
 function eventPhotoSource(photo) {
@@ -50,173 +42,161 @@ function decodeDocument(document) {
   return { id: document.name, ...fields };
 }
 
-export async function loadUpcomingEvents() {
-  let events;
-
-  if (firebaseConfig.apiKey && firebaseConfig.projectId) {
-    const today = new Date();
-    const date = [
-      today.getFullYear(),
-      String(today.getMonth() + 1).padStart(2, '0'),
-      String(today.getDate()).padStart(2, '0')
-    ].join('-');
-    const response = await fetch(
-      `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents:runQuery?key=${encodeURIComponent(firebaseConfig.apiKey)}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          structuredQuery: {
-            from: [{ collectionId: 'evenements' }],
-            where: {
-              fieldFilter: {
-                field: { fieldPath: 'date' },
-                op: 'GREATER_THAN',
-                value: { stringValue: date }
-              }
-            },
-            orderBy: [{ field: { fieldPath: 'date' }, direction: 'ASCENDING' }],
-            limit: 50
-          }
-        })
-      }
-    );
-    if (!response.ok) throw new Error(`Impossible de charger les événements (${response.status}).`);
-    const rows = await response.json();
-    events = rows.filter((row) => row.document).map((row) => decodeDocument(row.document));
-  } else {
-    const response = await fetch('/evenements.json');
-    if (!response.ok) throw new Error(`Impossible de charger les événements (${response.status}).`);
-    const data = await response.json();
-    events = Array.isArray(data) ? data : data.evenements || [];
-  }
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  return events
-    .map((event) => ({ ...event, parsedDate: parseDate(event.date) }))
-    .filter((event) => event.parsedDate && event.parsedDate > today && event.titre)
-    .sort((a, b) => a.parsedDate - b.parsedDate)
-    .slice(0, 50);
+async function fetchFromFirestore(today) {
+  // On filtre sur la date de FIN (toujours renseignée par l'espace admin),
+  // pour garder les événements du jour et ceux qui sont en cours.
+  const response = await fetch(
+    `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents:runQuery?key=${encodeURIComponent(firebaseConfig.apiKey)}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        structuredQuery: {
+          from: [{ collectionId: 'evenements' }],
+          where: {
+            fieldFilter: {
+              field: { fieldPath: 'fin' },
+              op: 'GREATER_THAN_OR_EQUAL',
+              value: { stringValue: today }
+            }
+          },
+          orderBy: [{ field: { fieldPath: 'fin' }, direction: 'ASCENDING' }],
+          limit: MAX_EVENTS
+        }
+      })
+    }
+  );
+  if (!response.ok) throw new Error(`Impossible de charger les événements (${response.status}).`);
+  const rows = await response.json();
+  return rows.filter((row) => row.document).map((row) => decodeDocument(row.document));
 }
 
-function eventCard(event, className = 'ev') {
-  const card = document.createElement('article');
-  card.className = className;
+async function fetchFromJson() {
+  const response = await fetch('/evenements.json');
+  if (!response.ok) throw new Error(`Impossible de charger les événements (${response.status}).`);
+  const data = await response.json();
+  return Array.isArray(data) ? data : data.evenements || [];
+}
+
+export async function loadUpcomingEvents() {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12);
+  const firebase = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId);
+  const events = firebase ? await fetchFromFirestore(isoDay(today)) : await fetchFromJson();
+
+  return events
+    .map((event) => {
+      const start = parseDate(event.date);
+      let end = parseDate(event.fin) || start;
+      if (start && end < start) end = start;
+      return { ...event, start, end };
+    })
+    .filter((event) => event.start && event.titre && event.end >= today)
+    .map((event) => ({
+      ...event,
+      today: event.start <= today && event.end >= today,
+      multi: event.end > event.start
+    }))
+    .sort((a, b) => a.start - b.start || a.end - b.end)
+    .slice(0, MAX_EVENTS);
+}
+
+const fmt = (date, options) => date.toLocaleDateString('fr-FR', options);
+
+function rangeText(start, end) {
+  const sameMonth = start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear();
+  const from = fmt(start, sameMonth ? { weekday: 'long', day: 'numeric' } : { weekday: 'long', day: 'numeric', month: 'long' });
+  const to = fmt(end, { weekday: 'long', day: 'numeric', month: 'long' });
+  return `Du ${from} au ${to}`;
+}
+
+function eventCard(event) {
+  const card = document.createElement('li');
+  card.className = event.today ? 'ev ev-now' : 'ev';
+
+  // Bloc date : jour de la semaine / numéro / mois  (ou « du 12 au 14 déc. »)
+  const date = document.createElement('time');
+  date.className = 'ev-date';
+  date.dateTime = isoDay(event.start);
+  const top = document.createElement('span');
+  top.className = 'ev-wd';
+  const day = document.createElement('span');
+  day.className = 'ev-day';
+  const month = document.createElement('span');
+  month.className = 'ev-month';
+  if (event.multi) {
+    top.textContent = 'du';
+    day.textContent = String(event.start.getDate());
+    month.textContent = `au ${event.end.getDate()} ${fmt(event.end, { month: 'short' })}`;
+    date.classList.add('ev-date-multi');
+  } else {
+    top.textContent = fmt(event.start, { weekday: 'short' });
+    day.textContent = String(event.start.getDate());
+    month.textContent = fmt(event.start, { month: 'short' });
+  }
+  date.append(top, day, month);
+
+  const body = document.createElement('div');
+  body.className = 'ev-body';
+  if (event.today) {
+    const badge = document.createElement('p');
+    badge.className = 'ev-badge';
+    badge.textContent = event.multi ? 'En ce moment' : 'Aujourd’hui';
+    body.append(badge);
+  }
+  const title = document.createElement('h3');
+  title.textContent = event.titre;
+  body.append(title);
+
+  const lines = [
+    ['ev-range', event.multi ? rangeText(event.start, event.end) : ''],
+    ['ev-time', event.heure],
+    ['ev-place', event.lieu]
+  ];
+  for (const [cls, text] of lines) {
+    if (!text) continue;
+    const line = document.createElement('p');
+    line.className = `ev-meta ${cls}`;
+    line.textContent = text;
+    body.append(line);
+  }
+  if (event.description) {
+    const description = document.createElement('p');
+    description.textContent = event.description;
+    body.append(description);
+  }
+
+  card.append(date, body);
 
   const photo = eventPhotoSource(event.photo);
   if (photo) {
     const image = document.createElement('img');
-    image.className = 'ph';
+    image.className = 'ev-photo';
     image.src = photo;
-    image.alt = event.titre;
+    image.alt = '';
     image.loading = 'lazy';
     card.append(image);
-  }
-
-  const date = document.createElement('p');
-  date.className = 'sd';
-  date.textContent = formatEventDate(event.parsedDate);
-  const title = document.createElement('h3');
-  title.textContent = event.titre;
-  card.append(date, title);
-
-  const details = eventDetails(event);
-  if (details) {
-    const detailParagraph = document.createElement('p');
-    detailParagraph.textContent = details;
-    card.append(detailParagraph);
-  }
-
-  if (event.description) {
-    const description = document.createElement('p');
-    description.textContent = event.description;
-    card.append(description);
   }
   return card;
 }
 
-function setupCarousel(root, events) {
-  const slides = root.querySelector('[data-slides]');
-  const previous = root.querySelector('[data-previous]');
-  const next = root.querySelector('[data-next]');
-  const counter = root.querySelector('[data-counter]');
-  if (!(slides instanceof HTMLElement) || !(counter instanceof HTMLElement)) return;
-
-  events.forEach((event) => slides.append(eventCard(event, 'slide')));
-  root.hidden = false;
-  slides.hidden = false;
-
-  if (events.length < 2) return;
-  previous.hidden = false;
-  next.hidden = false;
-  counter.hidden = false;
-  counter.textContent = `1 / ${events.length}`;
-  let current = 0;
-  const updateCounter = () => {
-    const containerCenter = slides.getBoundingClientRect().left + slides.clientWidth / 2;
-    let distance = Number.POSITIVE_INFINITY;
-    Array.from(slides.children).forEach((slide, index) => {
-      const bounds = slide.getBoundingClientRect();
-      const nextDistance = Math.abs(containerCenter - (bounds.left + bounds.width / 2));
-      if (nextDistance < distance) {
-        distance = nextDistance;
-        current = index;
-      }
-    });
-    counter.textContent = `${current + 1} / ${events.length}`;
-  };
-  const goTo = (index) => {
-    current = (index + events.length) % events.length;
-    slides.children[current].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-    counter.textContent = `${current + 1} / ${events.length}`;
-  };
-
-  slides.addEventListener('scroll', updateCounter, { passive: true });
-  previous.addEventListener('click', () => goTo(current - 1));
-  next.addEventListener('click', () => goTo(current + 1));
-  let timer = window.setInterval(() => goTo(current + 1), 6000);
-  const stop = () => {
-    window.clearInterval(timer);
-    timer = 0;
-  };
-  root.addEventListener('pointerdown', stop, { once: true });
-  root.addEventListener('focusin', stop, { once: true });
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) stop();
-}
-
-function setupEventList(root, events) {
+document.querySelectorAll('[data-event-list]').forEach(async (root) => {
   const loading = root.querySelector('[data-events-loading]');
-  const empty = root.querySelector('[data-events-empty]');
-  const list = root.querySelector('[data-events-list]');
-  if (loading) loading.hidden = true;
-  if (!events.length) {
-    if (empty) empty.hidden = false;
-    return;
-  }
-  if (list) events.forEach((event) => list.append(eventCard(event)));
-}
-
-document.querySelectorAll('[data-event-carousel], [data-event-list]').forEach(async (root) => {
   try {
-    const events = await loadUpcomingEvents();
-    if (root.hasAttribute('data-event-carousel')) setupCarousel(root, events);
-    else setupEventList(root, events);
+    const max = Number(root.getAttribute('data-max')) || MAX_EVENTS;
+    const events = (await loadUpcomingEvents()).slice(0, max);
+    if (loading) loading.hidden = true;
+    if (!events.length) {
+      root.querySelector('[data-events-empty]')?.removeAttribute('hidden');
+      return;
+    }
+    const list = root.querySelector('[data-events-list]');
+    events.forEach((event) => list?.append(eventCard(event)));
   } catch {
-    const loading = root.querySelector('[data-events-loading]');
     if (loading) {
-      loading.textContent = 'Les événements ne sont pas disponibles pour le moment. Réessayez un peu plus tard.';
+      loading.textContent = 'L’agenda n’est pas disponible pour le moment. Réessayez un peu plus tard.';
       loading.classList.add('event-error');
       loading.setAttribute('role', 'alert');
-    }
-    if (root.hasAttribute('data-event-carousel')) {
-      root.hidden = false;
-      const error = root.querySelector('[data-carousel-error]');
-      if (error) {
-        error.hidden = false;
-        error.textContent = 'Les événements ne sont pas disponibles pour le moment.';
-      }
     }
   }
 });

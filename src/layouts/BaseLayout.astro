@@ -14,7 +14,7 @@ const {
 
 const site = Astro.site;
 const canonical = site && canonicalPath ? new URL(canonicalPath, site).href : undefined;
-const socialImage = site ? new URL('/images/logo.svg', site).href : undefined;
+const socialImage = site ? new URL('/images/logo-encre.png', site).href : undefined;
 const pageUrl = canonical || '/';
 const jsonLd = structuredData || (homepage ? {
   '@context': 'https://schema.org',
@@ -24,6 +24,7 @@ const jsonLd = structuredData || (homepage ? {
   ...(site ? { '@id': new URL('/#brasserie-puzzle', site).href } : {}),
   ...(site ? { url: site.href } : {}),
   telephone: '+33622942892',
+  email: 'brasseriepuzzle@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: '341 route de Bresse',
@@ -45,7 +46,7 @@ const jsonLd = structuredData || (homepage ? {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#16201a" />
+    <meta name="theme-color" content="#f3ecdc" />
     <meta name="description" content={description} />
     <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'} />
     <meta property="og:type" content="website" />
@@ -59,11 +60,11 @@ const jsonLd = structuredData || (homepage ? {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     {socialImage && <meta property="og:image" content={socialImage} />}
-    <link rel="icon" href="/images/logo.svg" type="image/svg+xml" />
+    <link rel="icon" href="/images/feuille-encre.png" type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Chango&family=Nunito:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Josefin+Sans:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap"
       rel="stylesheet"
     />
     <title>{title}</title>

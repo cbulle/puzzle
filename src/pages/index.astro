@@ -1,32 +1,61 @@
 ---
-import BeerPieces from '../components/BeerPieces.astro';
-import EventsCarousel from '../components/EventsCarousel.astro';
+import Actions from '../components/Actions.astro';
+import EventsList from '../components/EventsList.astro';
 import Intro from '../components/Intro.astro';
+import Puzzle from '../components/Puzzle.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const description = 'Bières artisanales brassées à Lent, dans la Dombes (Ain) : découvrez les quatre bières de la Brasserie Puzzle et ses prochains événements.';
+const description = 'Micro-brasserie à Lent, dans la Dombes (Ain) : les bières Puzzle, leurs personnages et les prochains marchés où les trouver.';
 ---
 <BaseLayout
-  title="Brasserie Puzzle – Bières artisanales à Lent, dans la Dombes"
+  title="Brasserie Puzzle – Micro-brasserie à Lent, dans la Dombes"
   description={description}
   canonicalPath="/"
   homepage
 >
   <Intro />
   <main>
-    <section class="hero">
-      <h1>Des bières de caractère, nées dans la Dombes</h1>
-      <p>Brasserie Puzzle, à Lent dans l’Ain. Quatre bières, quatre personnages, un seul puzzle.</p>
+    <section class="hero" id="bieres">
+      <div class="hero-head">
+        <p class="kicker">Micro-brasserie à Lent, dans l’Ain</p>
+        <h1>Les bières Puzzle</h1>
+      </div>
+      <div class="hero-puzzle">
+        <Puzzle />
+        <p class="hint">Touchez une pièce pour découvrir la bière.</p>
+      </div>
+      <div class="hero-body">
+        <p class="lead">« Les bières Puzzle sont assemblées avec une ferveur animale… »</p>
+        <p>Bières pur malt, refermentées en bouteille, non pasteurisées et non filtrées. Chaque bière a son personnage.</p>
+      </div>
     </section>
-    <EventsCarousel />
-    <section id="bieres" aria-labelledby="beers-title">
-      <h2 id="beers-title">Les quatre pièces</h2>
-      <BeerPieces />
+
+    <section class="band">
+      <div class="wrap two">
+        <div>
+          <h2>Prochains rendez-vous</h2>
+          <p class="hide-sm">Marchés, portes ouvertes, fêtes de village… c’est là qu’on se croise.</p>
+        </div>
+        <div>
+          <EventsList max={3} />
+          <p class="more"><a class="link" href="/evenements.html">Tout l’agenda</a></p>
+        </div>
+      </div>
     </section>
-    <section class="tz">
-      <h2>Une brasserie de ferme</h2>
-      <p>La brasserie est installée dans un ancien corps de ferme, au pays des étangs. Le brasseur s’inspire de la nature autour de lui.</p>
-      <a class="btn" href="/brasserie.html">Découvrir la brasserie</a>
+
+    <section class="wrap two">
+      <div>
+        <h2>Venir à la brasserie</h2>
+        <p>Un ancien corps de ferme de la Dombes, au pays des étangs. Vente sur place le samedi matin.</p>
+        <p class="hide-sm"><a class="link" href="/brasserie.html">La brasserie</a></p>
+      </div>
+      <div>
+        <dl class="facts">
+          <dt>Vente sur place</dt><dd>Samedi, 9 h – 12 h</dd>
+          <dt>Le reste du temps</dt><dd>Sur rendez-vous</dd>
+        </dl>
+        <Actions />
+      </div>
     </section>
   </main>
 </BaseLayout>

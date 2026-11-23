@@ -1,42 +1,75 @@
-<header>
-  <a class="brand" href="/" aria-label="Brasserie Puzzle, accueil">
-    <img src="/images/logo.svg" alt="" width="34" height="39" />
-    <span>Puzzle</span>
-  </a>
-  <button id="burger" type="button" aria-expanded="false" aria-controls="nav" aria-label="Ouvrir le menu">
-    <i></i><i></i><i></i>
-  </button>
-  <nav id="nav" aria-label="Navigation principale">
-    <a href="/#bieres">Les bières</a>
-    <a href="/brasserie.html">La brasserie</a>
-    <a href="/evenements.html">Événements</a>
-    <a href="/contact.html">Contact</a>
-  </nav>
+---
+import { beers } from '../data/beers.js';
+
+const path = Astro.url.pathname;
+const onBeer = path.startsWith('/biere-');
+const current = (href) => (path.startsWith(href.replace('.html', '')) ? 'page' : undefined);
+---
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="/">
+      <img src="/images/feuille-encre.png" alt="" width="32" height="34" />
+      <span>Brasserie Puzzle</span>
+    </a>
+    <button id="burger" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+    <nav id="nav" aria-label="Navigation principale">
+      <div class="dd">
+        <button class="dd-btn" type="button" aria-expanded="false" aria-controls="dd-bieres" aria-current={onBeer ? 'page' : undefined}>
+          Les bières
+        </button>
+        <ul class="dd-menu" id="dd-bieres">
+          {beers.map((beer) => (
+            <li>
+              <a href={`/biere-${beer.slug}.html`} style={`--c:${beer.color}`} aria-current={current(`/biere-${beer.slug}.html`)}>
+                <span class="dd-dot" aria-hidden="true"></span>
+                <span class="dd-name">{beer.name}</span>
+                <span class="dd-style">{beer.portrait ? beer.style : 'bientôt'}</span>
+              </a>
+            </li>
+          ))}
+          <li><a class="dd-all" href="/#bieres">Voir le puzzle</a></li>
+        </ul>
+      </div>
+      <a href="/brasserie.html" aria-current={current('/brasserie.html')}>La brasserie</a>
+      <a href="/evenements.html" aria-current={current('/evenements.html')}>Événements</a>
+      <a href="/contact.html" aria-current={current('/contact.html')}>Contact</a>
+    </nav>
+  </div>
 </header>
 
 <script>
   const burger = document.querySelector('#burger');
-  const navigation = document.querySelector('#nav');
+  const nav = document.querySelector('#nav');
+  const ddBtn = document.querySelector('.dd-btn');
+  const dd = document.querySelector('.dd');
 
-  if (burger instanceof HTMLButtonElement && navigation instanceof HTMLElement) {
-    const closeMenu = () => {
-      burger.setAttribute('aria-expanded', 'false');
-      burger.setAttribute('aria-label', 'Ouvrir le menu');
-      navigation.classList.remove('open');
-    };
+  const setDropdown = (open: boolean) => {
+    ddBtn?.setAttribute('aria-expanded', String(open));
+    dd?.classList.toggle('open', open);
+  };
+  const setMenu = (open: boolean) => {
+    if (!(burger instanceof HTMLButtonElement) || !(nav instanceof HTMLElement)) return;
+    burger.setAttribute('aria-expanded', String(open));
+    burger.textContent = open ? 'Fermer' : 'Menu';
+    nav.classList.toggle('open', open);
+    if (!open) setDropdown(false);
+  };
 
-    burger.addEventListener('click', () => {
-      const open = burger.getAttribute('aria-expanded') !== 'true';
-      burger.setAttribute('aria-expanded', String(open));
-      burger.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
-      navigation.classList.toggle('open', open);
-    });
+  burger?.addEventListener('click', () => setMenu(burger.getAttribute('aria-expanded') !== 'true'));
+  ddBtn?.addEventListener('click', () => setDropdown(ddBtn.getAttribute('aria-expanded') !== 'true'));
+  nav?.addEventListener('click', (e) => {
+    if (e.target instanceof Element && e.target.closest('a')) setMenu(false);
+  });
+  document.addEventListener('click', (e) => {
+    if (dd && e.target instanceof Node && !dd.contains(e.target)) setDropdown(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { setDropdown(false); setMenu(false); }
+  });
 
-    navigation.addEventListener('click', (event) => {
-      if (event.target instanceof HTMLAnchorElement) closeMenu();
-    });
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') closeMenu();
-    });
-  }
+  // Ombre légère sous l'en-tête dès qu'on a défilé
+  const header = document.querySelector('.top');
+  const onScroll = () => header?.classList.toggle('scrolled', window.scrollY > 8);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 </script>

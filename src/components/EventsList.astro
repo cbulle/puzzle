@@ -1,7 +1,10 @@
-<div data-event-list>
-  <p role="status" data-events-loading>Chargement des événements…</p>
-  <p hidden data-events-empty>Aucun événement à venir pour le moment.</p>
-  <div data-events-list></div>
+---
+const { max = 50 } = Astro.props;
+---
+<div class="events" data-event-list data-max={max}>
+  <p role="status" data-events-loading>Chargement de l’agenda…</p>
+  <p hidden data-events-empty>Pas de date annoncée pour le moment. Suivez-nous sur <a href="https://www.facebook.com/brasseriepuzzle" rel="noopener noreferrer">Facebook</a> pour être prévenus.</p>
+  <ol class="ev-list" data-events-list></ol>
 </div>
 
 <script>

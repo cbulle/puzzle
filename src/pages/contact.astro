@@ -1,35 +1,26 @@
 ---
+import Actions from '../components/Actions.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 const description = 'Contacter la Brasserie Puzzle à Lent (01240), dans l’Ain : adresse, téléphone et horaires pour visiter la brasserie artisanale.';
 ---
 <BaseLayout title="Contact et accès à la brasserie | Brasserie Puzzle, Lent" description={description} canonicalPath="/contact.html">
-  <main>
-    <section>
-      <h1>Nous contacter</h1>
-      <div class="cblocks">
-        <div class="cbloc">
-          <h2>Coordonnées</h2>
-          <a class="tel" href="tel:+33622942892">06 22 94 28 92</a>
-          <p>Par téléphone, pour toute question et pour réserver une visite.</p>
-          <h3>Adresse</h3>
-          <address>341 route de Bresse<br />01240 Lent, France</address>
-          <h3>Horaires</h3>
-          <p>Ouvert le samedi de 9 h à 12 h. En dehors de ce créneau, sur réservation.</p>
-        </div>
-        <div class="cbloc">
-          <h2>Plan d’accès</h2>
-          <div class="map" data-map>
-            <button class="btn" type="button" data-show-map>Afficher la carte</button>
-          </div>
-          <a
-            class="btn"
-            href="https://www.google.com/maps/search/?api=1&amp;query=341+route+de+Bresse+01240+Lent"
-            target="_blank"
-            rel="noopener noreferrer"
-          >Ouvrir dans Google Maps</a>
+  <main class="wrap">
+    <h1>Nous contacter</h1>
+    <p class="lead">Une question, une commande, une visite&nbsp;? Le plus simple est d’appeler.</p>
+    <Actions email />
+    <div class="two contact-info">
+      <dl class="facts">
+        <dt>Adresse</dt><dd>341 route de Bresse<br />01240 Lent</dd>
+        <dt>Vente sur place</dt><dd>Samedi, 9 h – 12 h</dd>
+        <dt>En semaine</dt><dd>Sur rendez-vous</dd>
+      </dl>
+      <div>
+        <h2>Plan d’accès</h2>
+        <div class="map" data-map>
+          <button class="btn" type="button" data-show-map>Afficher la carte</button>
         </div>
       </div>
-    </section>
+    </div>
   </main>
 </BaseLayout>
 

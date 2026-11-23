@@ -1,11 +1,19 @@
 {
   "evenements": [
     {
-      "date": "2026-12-13",
+      "date": "2026-11-23",
+      "titre": "Exemple : vente à la brasserie",
+      "lieu": "341 route de Bresse, Lent",
+      "heure": "9h - 12h",
+      "description": "Événement d'exemple (aujourd'hui), à supprimer."
+    },
+    {
+      "date": "2026-12-11",
+      "fin": "2026-12-13",
       "titre": "Exemple : marché de Noël",
       "lieu": "À remplacer",
-      "heure": "9h - 17h",
-      "description": "Événement d'exemple, à supprimer."
+      "heure": "10h - 19h",
+      "description": "Événement d'exemple sur plusieurs jours, à supprimer."
     },
     {
       "date": "2026-12-20",
@@ -13,6 +21,11 @@
       "lieu": "À remplacer",
       "heure": "9h - 12h",
       "description": "Événement d'exemple, à supprimer."
+    },
+    {
+      "date": "2026-11-10",
+      "titre": "Exemple passé (ne doit pas s'afficher)",
+      "lieu": "À remplacer"
     }
   ]
 }

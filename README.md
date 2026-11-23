@@ -1,38 +1,46 @@
 # Brasserie Puzzle
 
-Site vitrine pré-rendu avec Astro. Les pages et leurs métadonnées sont présentes dans le HTML livré, sans dépendre de JavaScript pour le contenu principal.
+Site vitrine statique (Astro). L’agenda est géré par le brasseur depuis `/admin.html`, sans toucher au code.
 
 ## Développement
 
 ```sh
 npm install
-npm run dev
-npm run build
-npm run preview
+npm run dev      # http://localhost:4321
+npm run build    # résultat dans dist/
 ```
 
-Le résultat de production est généré dans `dist/`.
+## Ajouter / changer une bière
 
-La configuration Firebase locale se place dans `.env` à partir de `.env.example`. Ce fichier est ignoré par Git. Renseigner les variables `PUBLIC_FIREBASE_*` pour activer l’administration et le chargement des événements depuis Firestore.
+Tout est dans `src/data/beers.js` (nom, style, degré, couleur de la pièce).
 
-## Référencement et domaine
+Images d’une bière `<slug>` :
+- `public/images/etiquettes/<slug>.jpg` : l’étiquette complète (page de la bière) ;
+- `public/images/bieres/<slug>.jpg` : le personnage recadré en carré (pièce du puzzle sur l’accueil).
 
-Tant que le nom de domaine n’est pas choisi, le site n’invente pas d’URL canonique et ne publie pas de sitemap avec un faux domaine. Les métadonnées descriptives, Open Graph, les données structurées et les URL propres des pages sont déjà préparées.
+Tant que l’étiquette n’existe pas, laisser `portrait: false` : la pièce s’affiche « bientôt ». C’est le cas de Valentin.
 
-Une fois le domaine définitif choisi :
+Les fichiers d’origine (captures des étiquettes, logo) sont rangés dans `sources/`, hors du site publié.
 
-1. Copier `.env.example` vers `.env`.
-2. Définir `PUBLIC_SITE_URL=https://votre-domaine.fr` dans `.env` ou dans l’environnement de build de l’hébergeur.
-3. Relancer `npm run build`.
+## Agenda (Firebase)
 
-Astro ajoutera alors les URL canoniques absolues et produira automatiquement le sitemap. `robots.txt` indiquera son emplacement. Ne renseigner que le domaine canonique final (HTTPS, sans chemin ni barre oblique finale).
+Mise en place, une seule fois :
 
-## Pages
+1. Créer un projet sur https://console.firebase.google.com (offre gratuite suffisante).
+2. Activer **Authentication → E-mail / mot de passe**, puis créer le compte du brasseur.
+3. Créer une base **Firestore** et y coller les règles du fichier `firestore.rules`.
+4. Ajouter une application Web, copier sa configuration dans `.env` (voir `.env.example`), relancer le build.
 
-Les anciennes URL sont conservées : `/`, `/biere-valentin.html`, `/biere-jeannine.html`, `/biere-antoinette.html`, `/biere-cornelius.html`, `/brasserie.html`, `/contact.html`, `/evenements.html` et `/mentions.html`. Les anciennes adresses d’administration redirigent vers `/admin.html`.
+Ensuite, le brasseur va sur `/admin.html`, se connecte et ajoute / modifie / supprime ses dates (photo facultative).
 
-L’espace brasseur reste exclu des moteurs de recherche et n’est pas ajouté au sitemap. Les listes et le diaporama chargent uniquement les événements strictement à venir et en affichent au maximum 50.
+Règles de l’agenda :
+- un événement a une date de début et, s’il dure plusieurs jours, une date de fin (champ `fin`, enregistré automatiquement égal au début pour un événement d’un jour) ;
+- il reste affiché sur le site jusqu’au soir de son dernier jour, avec un badge « Aujourd’hui » / « En ce moment » ;
+- ensuite il n’est plus affiché sur le site, mais reste enregistré et visible (grisé) dans l’espace admin ;
+- l’accueil montre les 3 prochains, la page Agenda jusqu’à 50, pour ne pas tout charger.
 
-## Images
+Sans Firebase configuré, le site lit `public/evenements.json` (exemples à supprimer).
 
-Les images à ajouter au site vont dans `public/images/`. Le logo se trouve directement dans ce dossier. Les photos des bières doivent être nommées d’après leur URL (par exemple `valentin.png`) et placées dans `public/images/bieres/`.
+## Domaine
+
+Une fois le nom de domaine choisi, définir `PUBLIC_SITE_URL=https://votre-domaine.fr` dans `.env` (ou chez l’hébergeur) puis relancer le build : les URL canoniques et le sitemap sont alors générés.

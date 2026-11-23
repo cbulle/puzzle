@@ -21,8 +21,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <section id="panel" hidden>
       <h1 id="form-title">Nouvel événement</h1>
       <form id="event-form">
-        <label for="date">Date</label>
-        <input id="date" name="date" type="date" required />
+        <div class="dates">
+          <div>
+            <label for="date">Date de début</label>
+            <input id="date" name="date" type="date" required />
+          </div>
+          <div>
+            <label for="fin">Date de fin <small>(si plusieurs jours)</small></label>
+            <input id="fin" name="fin" type="date" />
+          </div>
+        </div>
+        <p class="help">Un événement reste affiché sur le site jusqu’au soir de son dernier jour. Ensuite il n’apparaît plus sur le site, mais reste dans la liste ci-dessous.</p>
         <label for="titre">Titre</label>
         <input id="titre" name="titre" type="text" required />
         <label for="lieu">Lieu</label>

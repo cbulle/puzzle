@@ -1,5 +1,4 @@
 ---
-import BeerPortrait from '../components/BeerPortrait.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { beers } from '../data/beers.js';
 
@@ -8,59 +7,52 @@ export function getStaticPaths() {
 }
 
 const { beer } = Astro.props;
-const description = `Découvrez ${beer.name}, bière ${beer.style.toLowerCase()} artisanale brassée à Lent dans l’Ain par la Brasserie Puzzle. ${beer.degree} d’alcool, disponible en bouteilles de 33 cl et 75 cl.`;
-const canonicalPath = `/biere-${beer.slug}.html`;
+const description = `${beer.name}, ${beer.style.toLowerCase()} à ${beer.degree} brassée à Lent (Ain) par la Brasserie Puzzle. Bière pur malt, refermentée en bouteille, non filtrée.`;
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'Product',
   name: `${beer.name} – ${beer.style}`,
   description,
   category: 'Bière artisanale',
-  brand: {
-    '@type': 'Brand',
-    name: 'Brasserie Puzzle'
-  },
-  manufacturer: {
-    '@type': 'Brewery',
-    name: 'Brasserie Puzzle',
-    ...(Astro.site ? { url: Astro.site.href } : {}),
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: 'Lent',
-      postalCode: '01240',
-      addressCountry: 'FR'
-    }
-  }
+  brand: { '@type': 'Brand', name: 'Brasserie Puzzle' }
 };
 ---
 <BaseLayout
   title={`${beer.name} – ${beer.style} | Brasserie Puzzle`}
   description={description}
-  canonicalPath={canonicalPath}
+  canonicalPath={`/biere-${beer.slug}.html`}
   structuredData={structuredData}
 >
-  <main>
-    <section class="bh" style={`--c:${beer.color};--i:${beer.ink}`}>
-      <BeerPortrait beer={beer} large />
-      <h1>{beer.name}</h1>
-      <p class="type">{beer.style}</p>
-    </section>
-    <section>
-      <h2>Caractéristiques</h2>
-      <ul class="car">
-        <li><b>Type</b> {beer.style}</li>
-        <li><b>Degré</b> {beer.degree}</li>
-        <li><b>Formats</b> 33 cl et 75 cl</li>
-      </ul>
-    </section>
-    <section>
-      <h2>Les autres pièces</h2>
-      <div class="autres">
-        {beers.filter((other) => other.slug !== beer.slug).map((other) => (
-          <a href={`/biere-${other.slug}.html`} style={`--c:${other.color}`}>{other.name}</a>
-        ))}
+  <main class="wrap beer" style={`--c:${beer.color};--i:${beer.ink}`}>
+    <p class="crumb"><a href="/#bieres">Les bières</a> / {beer.name}</p>
+    <h1 class="beer-name">{beer.name}</h1>
+    <p class="kicker">{beer.style} · {beer.degree}</p>
+
+    {beer.portrait
+      ? <a class="label-link" href={`/images/etiquettes/${beer.slug}.jpg`}>
+          <img class="portrait-sm" src={`/images/bieres/${beer.slug}.jpg`} alt={`${beer.name}, le personnage de l’étiquette`} width="700" height="700" />
+          <img class="label" src={`/images/etiquettes/${beer.slug}.jpg`} alt={`Étiquette de la bière ${beer.name}`} width="1400" height="686" />
+          <span class="label-cta">Voir l’étiquette en entier</span>
+        </a>
+      : <div class="label label-soon"><p>L’étiquette de {beer.name} arrive bientôt.</p></div>}
+
+    <div class="two">
+      <dl class="facts">
+        <dt>Style</dt><dd>{beer.style}</dd>
+        <dt>Degré</dt><dd>{beer.degree}</dd>
+        <dt>Formats</dt><dd>33 cl et 75 cl</dd>
+      </dl>
+      <div>
+        <h2>Dans la bouteille</h2>
+        <p>Eau, levures, houblons, malt d’orge et sucres pour la refermentation. Contient du gluten.</p>
+        <p>Bière pur malt, refermentée en bouteille, non pasteurisée, non filtrée&nbsp;: le dépôt au fond de la bouteille est naturel.</p>
       </div>
-      <a class="btn" href="/#bieres">Retour au puzzle</a>
-    </section>
+    </div>
+
+    <nav class="others" aria-label="Les autres bières">
+      {beers.filter((o) => o.slug !== beer.slug).map((o) => (
+        <a href={`/biere-${o.slug}.html`} style={`--c:${o.color};--i:${o.ink}`}>{o.name}</a>
+      ))}
+    </nav>
   </main>
 </BaseLayout>
