@@ -13,6 +13,7 @@ const current = (href) => (path.startsWith(href.replace('.html', '')) ? 'page' :
     </a>
     <button id="burger" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
     <nav id="nav" aria-label="Navigation principale">
+      <a href="/index.html" aria-current={current('/index.html')}>Acceuil</a>
       <div class="dd">
         <button class="dd-btn" type="button" aria-expanded="false" aria-controls="dd-bieres" aria-current={onBeer ? 'page' : undefined}>
           Les bières
